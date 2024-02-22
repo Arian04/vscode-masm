@@ -34,11 +34,11 @@ function debug {
 }
 
 function build {
-    & $ML /c /Fl"listing_file.lst" /Zd /Zi /coff $asm_file
+    & $ML /nologo /c /Fl"listing_file.lst" /Zd /Zi /coff $asm_file
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 	# the linker is a LIAR!! do NOT listen to it about /LTCG being unused, VS will no longer open source code while debugging without it
-    & $LINK /DEBUG /ASSEMBLYDEBUG /MANIFEST /NXCOMPAT /SUBSYSTEM:CONSOLE /LTCG /TLBID:1 /DYNAMICBASE "kernel32.lib" user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib "$asm_basename.obj"
+    & $LINK /NOLOGO /DEBUG /ASSEMBLYDEBUG /MANIFEST /NXCOMPAT /SUBSYSTEM:CONSOLE /LTCG /TLBID:1 /DYNAMICBASE "kernel32.lib" user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib "$asm_basename.obj"
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
