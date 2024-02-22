@@ -12,7 +12,7 @@ function debug {
 }
 
 function build {
-    & $ML /c /Zd /Zi /coff $asm_file
+    & $ML /c /Fl"listing_file.lst" /Zd /Zi /coff $asm_file
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 	# the linker is a LIAR!! do not listen to it about /LTCG being unused, VS will no longer open source code while debugging without it
