@@ -3,7 +3,6 @@ param (
 	[Parameter(Mandatory=$true)][string]$asm_file,
 	[Parameter(Mandatory=$true)][string]$asm_basename
 )
-# $asm_basename = $asm_file.Substring(0, $asm_file.Length - 4)
 Set-PSDebug -Trace 1
 
 function debug {
