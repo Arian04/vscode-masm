@@ -42,7 +42,7 @@ function build {
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
-function main() {
+function main {
 	# constants
 	$build_dir = "build"
 
