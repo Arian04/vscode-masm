@@ -2,24 +2,28 @@
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
     "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "build",
-            "command": "powershell",
-            "args": [   
+    "options": {
+        "cwd": "${workspaceFolder}",
+        "shell": {
+            "executable": "powershell",
+            "args": [
                 "-ExecutionPolicy",
                 "Unrestricted",
                 "-NoProfile",
                 "-File",
-                "${cwd}/.vscode/masm.ps1",
+            ],
+        }
+    },
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "${cwd}/.vscode/masm.ps1",
+            "args": [
                 "build",
                 "${file}",
-                "${fileBasenameNoExtension}",       
+                "${fileBasenameNoExtension}",
             ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "problemMatcher": [],
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -27,20 +31,13 @@
         },
         {
             "label": "debug",
-            "command": "powershell",
+            "type": "shell",
+            "command": "${cwd}/.vscode/masm.ps1",
             "args": [   
-                "-ExecutionPolicy",
-                "Unrestricted",
-                "-NoProfile",
-                "-File",
-                "${cwd}/.vscode/masm.ps1",
                 "debug",
                 "${file}",
                 "${fileBasenameNoExtension}",       
             ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -50,9 +47,6 @@
             "label": "clean",
             "type": "shell",
             "command": "echo todo",
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
             "group": {
                 "kind": "build",
             }

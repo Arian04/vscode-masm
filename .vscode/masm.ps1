@@ -3,7 +3,29 @@ param (
 	[Parameter(Mandatory=$true)][string]$asm_file,
 	[Parameter(Mandatory=$true)][string]$asm_basename
 )
-# Set-PSDebug -Trace 1
+# Set-PSDebug -Trace 2
+
+# TODO: find this programatically
+# Visual Studio install directory. Necessary for finding where `vcvarsall` is stored in order to call it
+$VS_INSTALL_DIR = "C:/Program Files/Microsoft Visual Studio/2022/Community"
+
+# Source for this amazing function: https://github.com/majkinetor/posh/blob/ee5ef42f8e2337ea6bcfb6ead8b1f7f6427f2a03/MM_Admin/Invoke-Environment.ps1
+function Invoke-Environment {
+    param
+    (
+        # Any cmd shell command, normally a configuration batch file.
+        [Parameter(Mandatory=$true)]
+        [string] $Command
+    )
+
+    $Command = "`"" + $Command + "`""
+    cmd /c "$Command > nul 2>&1 && set" | . { process {
+        if ($_ -match '^([^=]+)=(.*)') {
+            [System.Environment]::SetEnvironmentVariable($matches[1], $matches[2])
+        }
+    }}
+
+}
 
 function debug {
 	& build
@@ -15,8 +37,8 @@ function build {
     & $ML /c /Fl"listing_file.lst" /Zd /Zi /coff $asm_file
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-	# the linker is a LIAR!! do not listen to it about /LTCG being unused, VS will no longer open source code while debugging without it
-    & $LINK "/SUBSYSTEM:CONSOLE" "$asm_basename.obj" /DEBUG /ASSEMBLYDEBUG /MANIFEST /NXCOMPAT /DYNAMICBASE /LTCG /TLBID:1
+	# the linker is a LIAR!! do NOT listen to it about /LTCG being unused, VS will no longer open source code while debugging without it
+    & $LINK /DEBUG /ASSEMBLYDEBUG /MANIFEST /NXCOMPAT /SUBSYSTEM:CONSOLE /LTCG /TLBID:1 /DYNAMICBASE "kernel32.lib" user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib "$asm_basename.obj"
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
@@ -25,11 +47,13 @@ function main() {
 	$build_dir = "build"
 
 	# executable locations
+	$VCVARS = "$VS_INSTALL_DIR/VC/Auxiliary/Build/vcvars32.bat" # 32bit build environment
 	$ML = "ml.exe"
-	$LINK = "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\bin\Hostx86\x86\link"
-	$DEVENV = "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/devenv"
+	$LINK = "link.exe"
+	$DEVENV = "devenv.exe"
 
-	# code to run before build/debug
+	# calls batch script that sets important environment vars
+	Invoke-Environment "$VCVARS"
 
 	# make sure asm file is an asm file
 	$extension = $asm_file.Substring($asm_file.Length - 3)
