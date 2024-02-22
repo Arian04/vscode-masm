@@ -3,7 +3,7 @@ param (
 	[Parameter(Mandatory=$true)][string]$asm_file,
 	[Parameter(Mandatory=$true)][string]$asm_basename
 )
-Set-PSDebug -Trace 1
+# Set-PSDebug -Trace 1
 
 function debug {
 	& build

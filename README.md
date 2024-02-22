@@ -4,7 +4,8 @@ This repo includes some files for running MASM through VS Code and using Visual 
 
 ### TODO
 
-Right now the paths of the ml, link, and devenv programs are hardcoded, you're gonna wanna either add those to your system's PATH or change the PS1 script to use the right paths to each program for your system.
+- Right now the paths of the ml, link, and devenv programs are hardcoded, you're gonna wanna either add those to your system's PATH or change the PS1 script to use the right paths to each program for your system. I'll try to find this programatically eventually.
+- usage of any windows libraries with your asm program is untested and most likely doesn't work. support is coming soon.
 
 ### Requirements
 
