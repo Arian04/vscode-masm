@@ -27,5 +27,5 @@ Since the files will only be stored in the project-specific `.vscode` directory,
 ## Usage
 
 1. Make sure you "installed" it to your VS Code project.
-2. Just open your ASM file and run the `build` or `debug` build tasks using the command palette or whatever keyboard shortcut(s) you've set up. The ASM file must be open when you run the task, since it runs on the file you currently have open.
+2. Just open your ASM file and run the `build` or `debug` build tasks using the command palette or whatever keyboard shortcut(s) you've set up. The ASM file must be open when you run the task, since it targets the file you currently have open.
 3. Close Visual Studio after every debugging operation (I'm still trying to figure out how to re-use the same instance every time so that this won't be necessary)
