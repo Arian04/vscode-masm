@@ -4,98 +4,57 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "assemble",
-            "command": "ml", // TODO: this only works bc i added it to path, either figure out a better solution or add that to instructions
-            "args": [
-                "/c",
-                "/Zd",
-                "/Zi",
-                "/coff",
-                //"/Fl ${workspaceFolder}/build/listing_file.lst",
-                "${workspaceFolder}/${fileBasenameNoExtension}.asm"
+            "label": "build",
+            "command": "powershell",
+            "args": [   
+                "-ExecutionPolicy",
+                "Unrestricted",
+                "-NoProfile",
+                "-File",
+                "${cwd}/.vscode/masm.ps1",
+                "build",
+                "${file}",
+                "${fileBasenameNoExtension}",       
             ],
             "options": {
-                "cwd": "${workspaceFolder}/build"
+                "cwd": "${workspaceFolder}"
             },
-            "dependsOn": [
-                "_makebuildfolder",
-            ],
-        },
-        {
-            "label": "link",
-            "command": "link", // TODO: same as "ml" command above
-            "args": [
-                "/SUBSYSTEM:CONSOLE",
-                "${fileBasenameNoExtension}.obj",
-                "/DEBUG",
-                "/ASSEMBLYDEBUG",
-                "/MANIFEST",
-                "/NXCOMPAT",
-                "/DYNAMICBASE",
-                "/LTCG",
-                "/TLBID:1"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}/build"
-            },
-            "dependsOn": [
-                "_makebuildfolder",
-            ],
-        },
-        {
-            "label": "_makebuildfolder",
-            "type": "shell",
-            "linux": {
-                "command": "mkdir -p ${workspaceFolder}/build"
-            },
-            "windows": {
-                "command": "cmd",
-                "args": ["/C", "if not exist .\\build mkdir .\\build"]
-            },
-            "problemMatcher": [],
-            "group": "none"
-        },
-        {
-            "label": "debug_vs",
-            "detail": "open Visual Studio as a debugger",
-            "type": "process",
-            "command": "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/devenv.exe", // TODO: same as "ml" above but i didnt add to path yet
-            "args": [
-                "/NoSplash",
-                "/DoNotLoadProjects",
-                "/Command",
-                "Debug.StepInto",
-                "/debugexe",
-                "${workspaceFolder}/build/${fileBasenameNoExtension}.exe",
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}/build"
-            },
-            "group": "none"
-        },
-        {
-            "label": "debug",
-            "dependsOn": [
-                "assemble",
-                "link",
-                "debug_vs",
-            ],
             "problemMatcher": [],
             "group": {
                 "kind": "build",
-                "isDefault": "**.asm"
+                "isDefault": true
             }
         },
         {
-            "label": "build",
-            "dependsOn": [
-                "assemble",
-                "link"
+            "label": "debug",
+            "command": "powershell",
+            "args": [   
+                "-ExecutionPolicy",
+                "Unrestricted",
+                "-NoProfile",
+                "-File",
+                "${cwd}/.vscode/masm.ps1",
+                "debug",
+                "${file}",
+                "${fileBasenameNoExtension}",       
             ],
-            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
             "group": {
                 "kind": "build",
-                "isDefault": "**.asm"
+                "isDefault": true
+            }
+        },
+        {
+            "label": "clean",
+            "type": "shell",
+            "command": "echo todo",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "build",
             }
         }
     ]
