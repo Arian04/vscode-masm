@@ -10,12 +10,10 @@ The reason I still handle debugging by launching Visual Studio is because their 
 
 ## Requirements
 
-TL;DR: go [here](https://learn.microsoft.com/en-us/visualstudio/install/install-visual-studio?view=vs-2022) and install Visual Studio. Make sure to include a C++ workload when it asks you about which workloads you want. If you already have those, you're done with this section :)
+1. Go [here](https://learn.microsoft.com/en-us/visualstudio/install/install-visual-studio?view=vs-2022) and install Visual Studio
+2. Make sure to include a C++ workload when it asks you about which workloads you want to install.
 
-- MASM (ml.exe and link.exe)
-- Visual Studio (devenv.exe)
-
-You can either install MASM alone, or Visual Studio and MASM together. Visual Studio is only required if you want to debug, but I can't imagine anyone NOT wanting to debug their Assembly. 
+If you already have those, you're done with this section.
 
 ## Installation Instructions
 
@@ -24,8 +22,10 @@ You can either install MASM alone, or Visual Studio and MASM together. Visual St
 3. Open the .PS1 script that you downloaded and make sure that the VS Code installation directory path is correct. I plan to automate this eventually.
 4. *(Optional)* I recommend downloading the [MASM](https://marketplace.visualstudio.com/items?itemName=blindtiger.masm) VS Code extension for syntax highlighting.
 
+Since the files will only be stored in the project-specific `.vscode` directory, it makes no changes to your global configuration. This means that it's easy to get rid of the files if you want to, but also means if you want to work on MASM programs in another directory (and thus has a different `.vscode` directory), you'll need to copy the files into that new `.vscode` directory.
+
 ## Usage
 
 1. Make sure you "installed" it to your VS Code project.
-2. Just open your ASM file and run the `build` or `debug` build tasks using the command palette or whatever keyboard shortcut(s) you've set up.
+2. Just open your ASM file and run the `build` or `debug` build tasks using the command palette or whatever keyboard shortcut(s) you've set up. The ASM file must be open when you run the task, since it runs on the file you currently have open.
 3. Close Visual Studio after every debugging operation (I'm still trying to figure out how to re-use the same instance every time so that this won't be necessary)
