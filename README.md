@@ -21,6 +21,7 @@ If you already have those, you're done with this section.
 2. Drop them into the `.vscode` folder of a fresh project folder that you're using for your ASM files
 3. Open the .PS1 script that you downloaded and make sure that the VS Code installation directory path is correct. I plan to automate this eventually.
 4. *(Optional)* I recommend downloading the [MASM](https://marketplace.visualstudio.com/items?itemName=blindtiger.masm) VS Code extension for syntax highlighting.
+5. *(Optional)* I recommend downloading the [Tasks](https://marketplace.visualstudio.com/items?itemName=actboy168.tasks) VS Code extension so the Build and Debug tasks are shown in your statusbar (bottom left by default I believe) as clickable buttons.
 
 Since the files will only be stored in the project-specific `.vscode` directory, it makes no changes to your global configuration. This means that it's easy to get rid of the files if you want to, but also means if you want to work on MASM programs in another directory (and thus has a different `.vscode` directory), you'll need to copy the files into that new `.vscode` directory.
 

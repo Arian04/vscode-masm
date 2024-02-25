@@ -12,7 +12,10 @@
                 "-NoProfile",
                 "-File",
             ],
-        }
+        },
+		"statusbar": {
+			"filePattern" : ".*\\.asm"
+		}
     },
     "tasks": [
         {
@@ -27,7 +30,12 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }
+            },
+			"options": {
+				"statusbar": {
+					"label": "$(tools) Build"
+				}
+			},
         },
         {
             "label": "debug",
@@ -41,7 +49,12 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }
+            },
+			"options": {
+				"statusbar": {
+					"label": "$(debug-alt) Debug"
+				}
+			},
         },
         {
             "label": "clean",
