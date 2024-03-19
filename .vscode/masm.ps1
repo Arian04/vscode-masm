@@ -3,11 +3,71 @@ param (
 	[Parameter(Mandatory=$true)][string]$asm_file,
 	[Parameter(Mandatory=$true)][string]$asm_basename
 )
-# Set-PSDebug -Trace 2
+#Set-PSDebug -Trace 2 # For debugging
 
 # TODO: find this programatically
 # Visual Studio install directory. Necessary for finding where `vcvarsall` is stored in order to call it
-$VS_INSTALL_DIR = "C:/Program Files/Microsoft Visual Studio/2022/Community"
+if ($null -eq $env:VS_INSTALL_DIR) {
+	# TODO: descriptive error
+	exit 1
+}
+if ($null -eq $env:EXTRA_LIB_PATH) {
+	# TODO: descriptive error
+	exit 1
+}
+
+$EXTRA_LIB_PATH = "$env:EXTRA_LIB_PATH"
+$VS_INSTALL_DIR = "$env:VS_INSTALL_DIR"
+$EXTRA_LIB_NAME = "Irvine32.lib"
+
+# args
+$ML_OPTIONS = @(
+	"/nologo"
+	"/c"
+	"/Fllisting_file.lst"
+	"/Zd"
+	"/Zi"
+	"/coff"
+	"/I$EXTRA_LIB_PATH" # Irvine
+)
+$ML_ARGS = @(
+	$ML_OPTIONS
+	$asm_file
+)
+
+# NOTE: the linker is a LIAR!! do NOT listen to it about /LTCG being unused, VS will no longer open source code while debugging without it
+$LINK_OPTIONS = @(
+	"/NOLOGO"
+	"/DEBUG"
+	"/ASSEMBLYDEBUG"
+	"/MANIFEST"
+	"/NXCOMPAT"
+	"/SUBSYSTEM:CONSOLE"
+	"/LTCG"
+	"/TLBID:1"
+	"/DYNAMICBASE"
+	"/LIBPATH:$EXTRA_LIB_PATH" # Irvine
+)
+$LINK_LIBS = @(
+	"kernel32.lib"
+	"user32.lib"
+	"gdi32.lib"
+	"winspool.lib"
+	"comdlg32.lib"
+	"advapi32.lib"
+	"shell32.lib"
+	"ole32.lib"
+	"oleaut32.lib"
+	"uuid.lib"
+	"odbc32.lib"
+	"odbccp32.lib"
+	"$EXTRA_LIB_NAME" # Irvine
+)
+$LINK_ARGS = @(
+	$LINK_OPTIONS
+	$LINK_LIBS
+	"$asm_basename.obj"
+)
 
 # Source for this amazing function: https://github.com/majkinetor/posh/blob/ee5ef42f8e2337ea6bcfb6ead8b1f7f6427f2a03/MM_Admin/Invoke-Environment.ps1
 function Invoke-Environment {
@@ -34,11 +94,10 @@ function debug {
 }
 
 function build {
-    & $ML /nologo /c /Fl"listing_file.lst" /Zd /Zi /coff $asm_file
+    & $ML @ML_ARGS
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-	# the linker is a LIAR!! do NOT listen to it about /LTCG being unused, VS will no longer open source code while debugging without it
-    & $LINK /NOLOGO /DEBUG /ASSEMBLYDEBUG /MANIFEST /NXCOMPAT /SUBSYSTEM:CONSOLE /LTCG /TLBID:1 /DYNAMICBASE "kernel32.lib" user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib "$asm_basename.obj"
+    & $LINK $LINK_ARGS
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 

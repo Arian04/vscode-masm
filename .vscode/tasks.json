@@ -1,68 +1,67 @@
 {
-    // See https://go.microsoft.com/fwlink/?LinkId=733558
-    // for the documentation about the tasks.json format
-    "version": "2.0.0",
-    "options": {
-        "cwd": "${workspaceFolder}",
-        "shell": {
-            "executable": "powershell",
-            "args": [
-                "-ExecutionPolicy",
-                "Unrestricted",
-                "-NoProfile",
-                "-File",
-            ],
-        },
+	// See https://go.microsoft.com/fwlink/?LinkId=733558
+	// for the documentation about the tasks.json format
+	"version": "2.0.0",
+	"options": {
+		"cwd": "${workspaceFolder}",
+		"shell": {
+			"executable": "powershell",
+			"args": ["-ExecutionPolicy", "Unrestricted", "-NoProfile", "-File"]
+		},
+		"env": {
+			"VS_INSTALL_DIR": "C:/Program Files/Microsoft Visual Studio/2022/Community",
+			"EXTRA_LIB_PATH": "C:/Users/Arian/Documents/Irvine" // Change this to wherever you installed it
+		},
 		"statusbar": {
-			"filePattern" : ".*\\.asm"
+			"filePattern": ".*\\.asm"
 		}
-    },
-    "tasks": [
-        {
-            "label": "build",
-            "type": "shell",
-            "command": "${cwd}/.vscode/masm.ps1",
-            "args": [
-                "build",
-                "${file}",
-                "${fileBasenameNoExtension}",
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
+	},
+	"presentation": {
+		"echo": false,
+		"reveal": "always",
+		"focus": false,
+		"panel": "shared",
+		"showReuseMessage": false,
+		"clear": true
+	},
+	"tasks": [
+		{
+			"label": "build",
+			"type": "shell",
+			"command": "${cwd}/.vscode/masm.ps1",
+			"args": ["build", "${file}", "${fileBasenameNoExtension}"],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
 			"options": {
 				"statusbar": {
 					"label": "$(tools) Build"
 				}
+			}
+		},
+		{
+			"label": "debug",
+			"type": "shell",
+			"command": "${cwd}/.vscode/masm.ps1",
+			"args": ["debug", "${file}", "${fileBasenameNoExtension}"],
+			"group": {
+				"kind": "build",
+				"isDefault": true
 			},
-        },
-        {
-            "label": "debug",
-            "type": "shell",
-            "command": "${cwd}/.vscode/masm.ps1",
-            "args": [   
-                "debug",
-                "${file}",
-                "${fileBasenameNoExtension}",       
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
 			"options": {
 				"statusbar": {
 					"label": "$(debug-alt) Debug"
 				}
-			},
-        },
-        {
-            "label": "clean",
-            "type": "shell",
-            "command": "echo todo",
-            "group": {
-                "kind": "build",
-            }
-        }
-    ]
+			}
+		},
+		{
+			"label": "clean",
+			"type": "shell",
+			"command": "echo todo",
+			"group": {
+				"kind": "build"
+			}
+		}
+	]
 }
