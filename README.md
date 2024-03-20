@@ -19,7 +19,7 @@ If you already have those, you're done with this section.
 
 1. Download the files in the repository's `.vscode` directory
 2. Drop them into the `.vscode` folder of a fresh project folder that you're using for your ASM files
-3. Open the .PS1 script that you downloaded and make sure that the VS Code installation directory path is correct. I plan to automate this eventually.
+3. Open the `tasks.json` file that you downloaded and put into your `.vscode` folder. Make sure that the VS Code installation directory path is correct. I plan to automate this eventually. Set the correct path for your Irvine library directory as well if you're using that.
 4. *(Optional)* I recommend downloading the [MASM](https://marketplace.visualstudio.com/items?itemName=blindtiger.masm) VS Code extension for syntax highlighting.
 5. *(Optional)* I recommend downloading the [Tasks](https://marketplace.visualstudio.com/items?itemName=actboy168.tasks) VS Code extension so the Build and Debug tasks are shown in your statusbar (bottom left by default I believe) as clickable buttons.
 
@@ -29,4 +29,4 @@ Since the files will only be stored in the project-specific `.vscode` directory,
 
 1. Make sure you "installed" it to your VS Code project.
 2. Just open your ASM file and run the `build` or `debug` build tasks using the command palette or whatever keyboard shortcut(s) you've set up. The ASM file must be open when you run the task, since it targets the file you currently have open.
-3. Close Visual Studio after every debugging operation (I'm still trying to figure out how to re-use the same instance every time so that this won't be necessary)
+3. Close Visual Studio after every debugging operation (I'm still trying to figure out how to re-use the same instance every time so that this won't be necessary). If it asks if you want to save some file, you can decline.
