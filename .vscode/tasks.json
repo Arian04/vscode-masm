@@ -60,7 +60,12 @@
 			"type": "shell",
 			"command": "echo todo",
 			"group": {
-				"kind": "build"
+				"kind": "none"
+			},
+			"options": {
+				"statusbar": {
+					"hide": true
+				}
 			}
 		}
 	]
