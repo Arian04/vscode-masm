@@ -41,6 +41,21 @@
 			}
 		},
 		{
+			"label": "build + run",
+			"type": "shell",
+			"command": "${cwd}/.vscode/masm.ps1",
+			"args": ["buildrun", "${file}", "${fileBasenameNoExtension}"],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"options": {
+				"statusbar": {
+					"label": "$(play) Build + Run"
+				}
+			}
+		},
+		{
 			"label": "debug",
 			"type": "shell",
 			"command": "${cwd}/.vscode/masm.ps1",

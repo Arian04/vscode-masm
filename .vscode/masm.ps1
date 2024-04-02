@@ -93,12 +93,22 @@ function debug {
 	if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
+function buildrun {
+	&build
+
+	Write-Host "Running the produced executable..."
+	& $(Resolve-Path "${asm_basename}.exe").Path
+}
+
 function build {
     & $ML @ML_ARGS
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
     & $LINK $LINK_ARGS
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+	Clear-Host
+	Write-Host "Successfully built the program!"
 }
 
 function main {
@@ -131,6 +141,9 @@ function main {
 	switch ($command.ToLower()) {
 		"build" {
 			& build
+		}
+		"buildrun" {
+			& buildrun
 		}
 		"debug" {
 			& debug
