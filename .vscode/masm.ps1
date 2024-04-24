@@ -4,75 +4,145 @@ param (
 	[Parameter(Mandatory=$true)][string]$asm_basename
 )
 #Set-PSDebug -Trace 2 # For debugging
+#Set-PSDebug -Trace 1 # For less verbose debugging
 
-# TODO: find this programatically
-# Visual Studio install directory. Necessary for finding where `vcvarsall` is stored in order to call it
+# TODO: bypass "security" measures if possible
+-# - auto self-unblock powershell script or maybe do it via vscode task
+-# - auto un-quarantine produced binary
+
+##### Constants #####
+$build_dir = "build"
+
+# Irvine library constants
+$EXTRA_LIB_NAME = "Irvine32.lib"
+$IRVINE_LIB_URL = "https://github.com/surferkip/asmbook/raw/main/Irvine.zip"
+$TEMP_IRVINE_ZIP_PATH = "$env:TEMP/temp-irvine.zip"
+$LIB_DEST_PATH = "$env:LOCALAPPDATA/irvine"
+$IRVINE_UNZIPPED_SUBDIR = "Irvine" # If you ever change the URL or the zip file that the URL points to changes, make sure this is still correct
+
+# Executable constants
+$ML = "ml.exe"
+$LINK = "link.exe"
+$DEVENV = "devenv.exe"
+$VCVARS_SUBPATH = "VC/Auxiliary/Build/vcvars32.bat" # 32bit build environment
+
+# We expect some environment vars defined in tasks.json so make sure those are non-null
 if ($null -eq $env:VS_INSTALL_DIR) {
-	# TODO: descriptive error
+	Write-Error "VS_INSTALL_DIR environment variable unset"
 	exit 1
 }
 if ($null -eq $env:EXTRA_LIB_PATH) {
-	# TODO: descriptive error
+	Write-Error "EXTRA_LIB_PATH environment variable unset"
 	exit 1
 }
 
-$EXTRA_LIB_PATH = "$env:EXTRA_LIB_PATH"
-$VS_INSTALL_DIR = "$env:VS_INSTALL_DIR"
-$EXTRA_LIB_NAME = "Irvine32.lib"
+$global:EXTRA_LIB_PATH = "$env:EXTRA_LIB_PATH"
+$global:VS_INSTALL_DIR = "$env:VS_INSTALL_DIR"
 
-# args
-$ML_OPTIONS = @(
-	"/nologo"
-	"/c"
-	"/Fllisting_file.lst"
-	"/Zd"
-	"/Zi"
-	"/coff"
-	"/I$EXTRA_LIB_PATH" # Irvine
-)
-$ML_ARGS = @(
-	$ML_OPTIONS
-	$asm_file
-)
+#####################
 
-# NOTE: the linker is a LIAR!! do NOT listen to it about /LTCG being unused, VS will no longer open source code while debugging without it
-$LINK_OPTIONS = @(
-	"/NOLOGO"
-	"/DEBUG"
-	"/ASSEMBLYDEBUG"
-	"/MANIFEST"
-	"/NXCOMPAT"
-	"/SUBSYSTEM:CONSOLE"
-	"/LTCG"
-	"/TLBID:1"
-	"/DYNAMICBASE"
-	"/LIBPATH:$EXTRA_LIB_PATH" # Irvine
-)
-$LINK_LIBS = @(
-	"kernel32.lib"
-	"user32.lib"
-	"gdi32.lib"
-	"winspool.lib"
-	"comdlg32.lib"
-	"advapi32.lib"
-	"shell32.lib"
-	"ole32.lib"
-	"oleaut32.lib"
-	"uuid.lib"
-	"odbc32.lib"
-	"odbccp32.lib"
-	"$EXTRA_LIB_NAME" # Irvine
-)
-$LINK_ARGS = @(
-	$LINK_OPTIONS
-	$LINK_LIBS
-	"$asm_basename.obj"
-)
+function Find-Visual-Studio-Install-Path {
+	param (
+		[Parameter(Mandatory=$true)][string]$program_files_path
+	)
+
+	$MS_VS_DIR = "$program_files_path/Microsoft Visual Studio"
+	$VS_EDITIONS = @("Enterprise", "Professional", "Community")
+	
+	# if "Microsoft Visual Studio" directory exists
+	if (Test-Path -PathType Container -LiteralPath $MS_VS_DIR) {
+		# get list of subdirectories and iterate over it in "greatest integer first" order because I want to prefer newer Visual Studio installations
+		$subdir_list = Get-ChildItem -Directory -Name -Filter "20??" -LiteralPath "$MS_VS_DIR" | Sort-Object -Descending
+		foreach($vs_year in $subdir_list) {
+			foreach ($edition in $VS_EDITIONS) {
+				$possible_vs_install_dir = "$MS_VS_DIR/$vs_year/$edition"
+
+				# if edition is installed (directory exists)
+				if (Test-Path -PathType Container -LiteralPath $possible_vs_install_dir) {
+					# return that path
+					$possible_vs_install_dir
+					return
+				}
+			}
+
+			# This line only runs if the earlier loop didn't already cause this function to return
+			Write-Host "Could not find any edition of Visual Studio in: $MS_VS_DIR/$vs_year"
+		}
+	} else {
+		Write-Host "Could not find a Visual Studio installation in: $program_files_path"
+	}
+
+	# Return null if we don't find an installation directory (if we found it, we would've returned before ever hitting this line)
+	$null
+}
+
+function Setup-Required-Directories {
+	# Autodetect if necessary
+	if ($VS_INSTALL_DIR -eq "auto-detect") {
+		$path_array = @("C:/Program Files", "C:/Program Files (x86)")
+
+		$found_it = $false
+		foreach ($path_string in $path_array) {
+			$detected_install_dir = Find-Visual-Studio-Install-Path "$path_string"
+
+			if ($detected_install_dir -ne $null) {
+				Write-Host "Detected Visual Studio installation at $detected_install_dir"
+				$global:VS_INSTALL_DIR = $detected_install_dir
+				$found_it = $true
+				break
+			}
+		}
+
+		if (!$found_it) {
+			Write-Error "Failed to auto-detect Visual Studio installation directory."
+			exit 1
+		}
+	}
+	if ($EXTRA_LIB_PATH -eq "auto-download") {
+		# If it doesn't exist at the expected path, download it
+		if (!(Test-Path -PathType Container -Path $LIB_DEST_PATH)) {
+			Write-Host "Extra library path doesn't exist and EXTRA_LIB_PATH defined in tasks.json is set to "$EXTRA_LIB_PATH", so attempting to download the library."
+
+			# Silence progress bar (not sure if I need to fix this afterwards or if it'll be fine)
+			$ProgressPreference = 'SilentlyContinue'
+
+			Write-Host "Downloading Irvine library..."
+			Invoke-WebRequest -uri "$IRVINE_LIB_URL" -Method "GET" -Outfile "$TEMP_IRVINE_ZIP_PATH"
+			# TODO: get and verify checksum for safety? since we're downloading data from an arbitrary URL programatically.
+
+			Write-Host "Extracting Irvine library zip file..."
+			Add-Type -Assembly "System.IO.Compression.Filesystem"
+			[System.IO.Compression.ZipFile]::ExtractToDirectory("$TEMP_IRVINE_ZIP_PATH", "$LIB_DEST_PATH")
+			if (!($?)) { exit 1 }
+		}
+
+		# Set the now-correct library path
+		$global:EXTRA_LIB_PATH = "$LIB_DEST_PATH/$IRVINE_UNZIPPED_SUBDIR"
+		Write-Host "Using Irvine library at path: $EXTRA_LIB_PATH"
+	}
+
+	# Verify that directories exist
+	$either_directory_missing = $false
+	if (!(Test-Path -PathType Container -Path $VS_INSTALL_DIR)) {
+		Write-Error "Visual Studio installation directory does not exist: $VS_INSTALL_DIR"
+		$either_directory_missing = $true
+	}
+	if (!(Test-Path -PathType Container -Path $EXTRA_LIB_PATH)) {
+		Write-Error "Irvine library directory does not exist: $EXTRA_LIB_PATH"
+		$either_directory_missing = $true
+	}
+
+	# Exit after checking existence of both directories if one (or both) are missing
+	if ($either_directory_missing) {
+		exit 1
+	}
+}
 
 # Source for this amazing function: https://github.com/majkinetor/posh/blob/ee5ef42f8e2337ea6bcfb6ead8b1f7f6427f2a03/MM_Admin/Invoke-Environment.ps1
+# NOTE: It's pretty slow (relatively). I used the "Profiler" module to find out that it takes up > 95% of the script's
+# 		execution time, but it still takes under a second on my underpowered Windows VM, so it's probably fine.
 function Invoke-Environment {
-    param
-    (
+    param (
         # Any cmd shell command, normally a configuration batch file.
         [Parameter(Mandatory=$true)]
         [string] $Command
@@ -107,21 +177,71 @@ function build {
     & $LINK $LINK_ARGS
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-	Clear-Host
 	Write-Host "Successfully built the program!"
 }
 
 function main {
-	# constants
-	$build_dir = "build"
+	# TODO: bypass "security" measures
+	# - auto self-unblock powershell script or maybe do it via vscode task
+	# - auto un-quarantine produced binary
 
-	# executable locations
-	$VCVARS = "$VS_INSTALL_DIR/VC/Auxiliary/Build/vcvars32.bat" # 32bit build environment
-	$ML = "ml.exe"
-	$LINK = "link.exe"
-	$DEVENV = "devenv.exe"
+	Setup-Required-Directories
+
+	# args
+	$ML_OPTIONS = @(
+		"/nologo"
+		"/c"
+		"/Fllisting_file.lst"
+		"/Zd"
+		"/Zi"
+		"/coff"
+		"/I$EXTRA_LIB_PATH" # Irvine
+	)
+	$ML_ARGS = @(
+		$ML_OPTIONS
+		$asm_file
+	)
+
+	# NOTE: the linker is a LIAR!! do NOT listen to it about /LTCG being unused, VS will no longer open the source code file while debugging without it
+	$LINK_OPTIONS = @(
+		"/NOLOGO"
+		"/DEBUG"
+		"/ASSEMBLYDEBUG"
+		"/MANIFEST"
+		"/NXCOMPAT"
+		"/SUBSYSTEM:CONSOLE"
+		"/LTCG"
+		"/TLBID:1"
+		"/DYNAMICBASE"
+		"/LIBPATH:$EXTRA_LIB_PATH" # Irvine
+	)
+	$LINK_LIBS = @(
+		"kernel32.lib"
+		"user32.lib"
+		"gdi32.lib"
+		"winspool.lib"
+		"comdlg32.lib"
+		"advapi32.lib"
+		"shell32.lib"
+		"ole32.lib"
+		"oleaut32.lib"
+		"uuid.lib"
+		"odbc32.lib"
+		"odbccp32.lib"
+		"$EXTRA_LIB_NAME" # Irvine
+	)
+	$LINK_ARGS = @(
+		$LINK_OPTIONS
+		$LINK_LIBS
+		"$asm_basename.obj"
+	)
 
 	# calls batch script that sets important environment vars
+	$VCVARS = "$VS_INSTALL_DIR/$VCVARS_SUBPATH"
+	if (!(Test-Path -PathType Leaf -LiteralPath $VCVARS)) {
+		Write-Error "Provided vcvars script path does not exist: $VCVARS"
+		exit 1
+	}
 	Invoke-Environment "$VCVARS"
 
 	# make sure asm file is an asm file
@@ -132,7 +252,7 @@ function main {
 	}
 
 	# if $build_dir does not exist, create it, then cd into it
-	if (-not (Test-Path $build_dir)) {
+	if (! (Test-Path $build_dir)) {
 		New-Item -ItemType Directory -Path $build_dir | Out-Null
 	}
 	Set-Location $build_dir
@@ -141,12 +261,15 @@ function main {
 	switch ($command.ToLower()) {
 		"build" {
 			& build
+			break
 		}
 		"buildrun" {
 			& buildrun
+			break
 		}
 		"debug" {
 			& debug
+			break
 		}
 		default {
 			Write-Host "Invalid command: $command"
@@ -156,3 +279,4 @@ function main {
 }
 
 & main
+

@@ -9,8 +9,12 @@
 			"args": ["-ExecutionPolicy", "Unrestricted", "-NoProfile", "-File"]
 		},
 		"env": {
-			"VS_INSTALL_DIR": "C:/Program Files/Microsoft Visual Studio/2022/Community",
-			"EXTRA_LIB_PATH": "C:/Users/Arian/Documents/Irvine" // Change this to wherever you installed it
+			"VS_INSTALL_DIR": "auto-detect",
+			"EXTRA_LIB_PATH": "auto-download"
+
+			// If the script fails to automatically handle these (or you want it to run faster or something), you can hardcode the paths
+			// "VS_INSTALL_DIR": "C:/Program Files/Microsoft Visual Studio/2022/Community",
+			// "EXTRA_LIB_PATH": "C:/Users/EXAMPLE_USER/Documents/Irvine"
 		},
 		"statusbar": {
 			"filePattern": ".*\\.asm"
