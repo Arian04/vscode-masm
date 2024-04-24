@@ -6,7 +6,7 @@
 		"cwd": "${workspaceFolder}",
 		"shell": {
 			"executable": "powershell",
-			"args": ["-ExecutionPolicy", "Unrestricted", "-NoProfile", "-File"]
+			"args": ["-ExecutionPolicy", "Bypass", "-NoProfile", "-File"]
 		},
 		"env": {
 			"VS_INSTALL_DIR": "auto-detect",
