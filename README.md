@@ -11,7 +11,7 @@ The reason I still handle debugging by launching Visual Studio is because their 
 ## Requirements
 
 1. Go [here](https://learn.microsoft.com/en-us/visualstudio/install/install-visual-studio?view=vs-2022) and install Visual Studio.
-2. Make sure to include a C++ workload when it asks you about which workloads you want to install.
+2. Make sure to include a C++ workload when it asks you about which workloads you want to install. More details (and screenshots) are available at the link mentioned under their "Step 4" heading, specifically [here](https://learn.microsoft.com/en-us/visualstudio/install/install-visual-studio#step-4---choose-workloads).
 
 If you already have those, you're done with this section.
 
