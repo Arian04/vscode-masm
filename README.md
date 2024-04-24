@@ -10,14 +10,14 @@ The reason I still handle debugging by launching Visual Studio is because their 
 
 ## Requirements
 
-1. Go [here](https://learn.microsoft.com/en-us/visualstudio/install/install-visual-studio?view=vs-2022) and install Visual Studio
+1. Go [here](https://learn.microsoft.com/en-us/visualstudio/install/install-visual-studio?view=vs-2022) and install Visual Studio.
 2. Make sure to include a C++ workload when it asks you about which workloads you want to install.
 
 If you already have those, you're done with this section.
 
 ## Installation Instructions
 
-1. Download the files in the repository's `.vscode` folder (`masm.ps1` and `tasks.json`)
+1. Download the files in the repository's `.vscode` folder (`masm.ps1` and `tasks.json`).
 2. Drop them into the `.vscode` folder of a fresh project folder that you're using for your ASM files. If the `.vscode` folder doesn't exist, just create it.
 3. *(Optional)* I recommend downloading the [MASM](https://marketplace.visualstudio.com/items?itemName=blindtiger.masm) VS Code extension for syntax highlighting.
 4. *(Optional)* I recommend downloading the [Tasks](https://marketplace.visualstudio.com/items?itemName=actboy168.tasks) VS Code extension so the build tasks are shown in your statusbar (bottom left by default I believe) as clickable buttons.
