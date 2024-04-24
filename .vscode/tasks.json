@@ -29,7 +29,7 @@
 			"label": "build",
 			"type": "shell",
 			"command": "${cwd}/.vscode/masm.ps1",
-			"args": ["build", "${file}", "${fileBasenameNoExtension}"],
+			"args": ["build", "\"${file}\"", "\"${fileBasenameNoExtension}\""],
 			"group": {
 				"kind": "build",
 				"isDefault": true
@@ -44,7 +44,7 @@
 			"label": "build + run",
 			"type": "shell",
 			"command": "${cwd}/.vscode/masm.ps1",
-			"args": ["buildrun", "${file}", "${fileBasenameNoExtension}"],
+			"args": ["buildrun", "\"${file}\"", "\"${fileBasenameNoExtension}\""],
 			"group": {
 				"kind": "build",
 				"isDefault": true
@@ -59,7 +59,7 @@
 			"label": "debug",
 			"type": "shell",
 			"command": "${cwd}/.vscode/masm.ps1",
-			"args": ["debug", "${file}", "${fileBasenameNoExtension}"],
+			"args": ["debug", "\"${file}\"", "\"${fileBasenameNoExtension}\""],
 			"group": {
 				"kind": "build",
 				"isDefault": true
