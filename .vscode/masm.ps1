@@ -6,9 +6,7 @@ param (
 #Set-PSDebug -Trace 2 # For debugging
 #Set-PSDebug -Trace 1 # For less verbose debugging
 
-# TODO: bypass "security" measures if possible
-# - auto self-unblock powershell script or maybe do it via vscode task
-# - auto un-quarantine produced binary
+# TODO: auto un-quarantine produced binary if possible
 
 ##### Constants #####
 $build_dir = "build"
