@@ -7,8 +7,8 @@ param (
 #Set-PSDebug -Trace 1 # For less verbose debugging
 
 # TODO: bypass "security" measures if possible
--# - auto self-unblock powershell script or maybe do it via vscode task
--# - auto un-quarantine produced binary
+# - auto self-unblock powershell script or maybe do it via vscode task
+# - auto un-quarantine produced binary
 
 ##### Constants #####
 $build_dir = "build"
