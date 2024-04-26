@@ -62,10 +62,10 @@ function Find-Visual-Studio-Install-Path {
 			}
 
 			# This line only runs if the earlier loop didn't already cause this function to return
-			Write-Host "Could not find any edition of Visual Studio in: $MS_VS_DIR/$vs_year"
+			Write-Output "Could not find any edition of Visual Studio in: $MS_VS_DIR/$vs_year"
 		}
 	} else {
-		Write-Host "Could not find a Visual Studio installation in: $program_files_path"
+		Write-Output "Could not find a Visual Studio installation in: $program_files_path"
 	}
 
 	# Return null if we don't find an installation directory (if we found it, we would've returned before ever hitting this line)
@@ -82,7 +82,7 @@ function Setup-Required-Directories {
 			$detected_install_dir = Find-Visual-Studio-Install-Path "$path_string"
 
 			if ($detected_install_dir -ne $null) {
-				Write-Host "Detected Visual Studio installation at $detected_install_dir"
+				Write-Output "Detected Visual Studio installation at $detected_install_dir"
 				$global:VS_INSTALL_DIR = $detected_install_dir
 				$found_it = $true
 				break
@@ -97,16 +97,16 @@ function Setup-Required-Directories {
 	if ($EXTRA_LIB_PATH -eq "auto-download") {
 		# If it doesn't exist at the expected path, download it
 		if (!(Test-Path -PathType Container -Path $LIB_DEST_PATH)) {
-			Write-Host "Extra library path doesn't exist and EXTRA_LIB_PATH defined in tasks.json is set to "$EXTRA_LIB_PATH", so attempting to download the library."
+			Write-Output "Extra library path doesn't exist and EXTRA_LIB_PATH defined in tasks.json is set to "$EXTRA_LIB_PATH", so attempting to download the library."
 
 			# Silence progress bar (not sure if I need to fix this afterwards or if it'll be fine)
 			$ProgressPreference = 'SilentlyContinue'
 
-			Write-Host "Downloading Irvine library..."
+			Write-Output "Downloading Irvine library..."
 			Invoke-WebRequest -uri "$IRVINE_LIB_URL" -Method "GET" -Outfile "$TEMP_IRVINE_ZIP_PATH"
 			# TODO: get and verify checksum for safety? since we're downloading data from an arbitrary URL programatically.
 
-			Write-Host "Extracting Irvine library zip file..."
+			Write-Output "Extracting Irvine library zip file..."
 			Add-Type -Assembly "System.IO.Compression.Filesystem"
 			[System.IO.Compression.ZipFile]::ExtractToDirectory("$TEMP_IRVINE_ZIP_PATH", "$LIB_DEST_PATH")
 			if (!($?)) { exit 1 }
@@ -114,7 +114,7 @@ function Setup-Required-Directories {
 
 		# Set the now-correct library path
 		$global:EXTRA_LIB_PATH = "$LIB_DEST_PATH/$IRVINE_UNZIPPED_SUBDIR"
-		Write-Host "Using Irvine library at path: $EXTRA_LIB_PATH"
+		Write-Output "Using Irvine library at path: $EXTRA_LIB_PATH"
 	}
 
 	# Verify that directories exist
@@ -162,7 +162,7 @@ function debug {
 function buildrun {
 	&build
 
-	Write-Host "Running the produced executable..."
+	Write-Output "Running the produced executable..."
 	& $(Resolve-Path "${asm_basename}.exe").Path
 }
 
@@ -173,7 +173,7 @@ function build {
     & $LINK $LINK_ARGS
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-	Write-Host "Successfully built the program!"
+	Write-Output "Successfully built the program!"
 }
 
 function main {
@@ -243,7 +243,7 @@ function main {
 	# make sure asm file is an asm file
 	$extension = $asm_file.Substring($asm_file.Length - 3)
 	if ($extension -ne "asm") {
-		Write-Host "Given file is NOT an assembly file"
+		Write-Output "Given file is NOT an assembly file"
 		exit 1
 	}
 
@@ -268,7 +268,7 @@ function main {
 			break
 		}
 		default {
-			Write-Host "Invalid command: $command"
+			Write-Output "Invalid command: $command"
 			exit 1
 		}
 	}
