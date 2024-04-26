@@ -157,7 +157,7 @@ function Invoke-Environment {
 
 function debug {
 	& build
-	& $DEVENV /NoSplash /DoNotLoadProjects /Command Debug.StepInto /debugexe $(Resolve-Path "${asm_basename}.exe").Path
+	& $DEVENV /NoSplash /Command Debug.StepInto /debugexe $(Resolve-Path "${asm_basename}.exe").Path
 	if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
