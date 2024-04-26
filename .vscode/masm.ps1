@@ -6,8 +6,6 @@ param (
 #Set-PSDebug -Trace 2 # For debugging
 #Set-PSDebug -Trace 1 # For less verbose debugging
 
-# TODO: auto un-quarantine produced binary if possible
-
 ##### Constants #####
 $build_dir = "build"
 
