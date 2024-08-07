@@ -72,7 +72,7 @@ function Find-Visual-Studio-Install-Path {
 	$null
 }
 
-function Setup-Required-Directories {
+function Initialize-Required-Directories {
 	# Autodetect if necessary
 	if ($VS_INSTALL_DIR -eq "auto-detect") {
 		$path_array = @("C:/Program Files", "C:/Program Files (x86)")
@@ -177,11 +177,7 @@ function build {
 }
 
 function main {
-	# TODO: bypass "security" measures
-	# - auto self-unblock powershell script or maybe do it via vscode task
-	# - auto un-quarantine produced binary
-
-	Setup-Required-Directories
+	Initialize-Required-Directories
 
 	# args
 	$ML_OPTIONS = @(
