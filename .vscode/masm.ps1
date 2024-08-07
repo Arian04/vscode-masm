@@ -81,7 +81,7 @@ function Initialize-Required-Directories {
 		foreach ($path_string in $path_array) {
 			$detected_install_dir = Find-Visual-Studio-Install-Path "$path_string"
 
-			if ($detected_install_dir -ne $null) {
+			if ($null -ne $detected_install_dir) {
 				Write-Output "Detected Visual Studio installation at $detected_install_dir"
 				$global:VS_INSTALL_DIR = $detected_install_dir
 				$found_it = $true
