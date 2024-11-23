@@ -194,7 +194,6 @@ function main {
 		$asm_file
 	)
 
-	# NOTE: the linker is a LIAR!! do NOT listen to it about /LTCG being unused, VS will no longer open the source code file while debugging without it
 	$LINK_OPTIONS = @(
 		"/NOLOGO"
 		"/DEBUG"
@@ -202,7 +201,7 @@ function main {
 		"/MANIFEST"
 		"/NXCOMPAT"
 		"/SUBSYSTEM:CONSOLE"
-		"/LTCG"
+		"/INCREMENTAL:NO"
 		"/TLBID:1"
 		"/DYNAMICBASE"
 		"/LIBPATH:$EXTRA_LIB_PATH" # Irvine
