@@ -7,7 +7,7 @@ param (
 #Set-PSDebug -Trace 1 # For less verbose debugging
 
 ##### Constants #####
-$build_dir = "build"
+$BUILD_DIR = "build"
 
 # Irvine library constants
 $EXTRA_LIB_NAME = "Irvine32.lib"
@@ -21,6 +21,54 @@ $ML = "ml.exe"
 $LINK = "link.exe"
 $DEVENV = "devenv.exe"
 $VCVARS_SUBPATH = "VC/Auxiliary/Build/vcvars32.bat" # 32bit build environment
+
+# Args
+$ML_OPTIONS = @(
+	"/nologo"
+	"/c"
+	"/Fllisting_file.lst"
+	"/Zd"
+	"/Zi"
+	"/coff"
+	"/I$EXTRA_LIB_PATH" # Irvine
+)
+$ML_ARGS = @(
+	$ML_OPTIONS
+	$asm_file
+)
+
+$LINK_OPTIONS = @(
+	"/NOLOGO"
+	"/DEBUG"
+	"/ASSEMBLYDEBUG"
+	"/MANIFEST"
+	"/NXCOMPAT"
+	"/SUBSYSTEM:CONSOLE"
+	"/INCREMENTAL:NO"
+	"/TLBID:1"
+	"/DYNAMICBASE"
+	"/LIBPATH:$EXTRA_LIB_PATH" # Irvine
+)
+$LINK_LIBS = @(
+	"kernel32.lib"
+	"user32.lib"
+	"gdi32.lib"
+	"winspool.lib"
+	"comdlg32.lib"
+	"advapi32.lib"
+	"shell32.lib"
+	"ole32.lib"
+	"oleaut32.lib"
+	"uuid.lib"
+	"odbc32.lib"
+	"odbccp32.lib"
+	"$EXTRA_LIB_NAME" # Irvine
+)
+$LINK_ARGS = @(
+	$LINK_OPTIONS
+	$LINK_LIBS
+	"$asm_basename.obj"
+)
 
 # We expect some environment vars defined in tasks.json so make sure those are non-null
 if ($null -eq $env:VS_INSTALL_DIR) {
@@ -179,54 +227,6 @@ function build {
 function main {
 	Initialize-Required-Directories
 
-	# args
-	$ML_OPTIONS = @(
-		"/nologo"
-		"/c"
-		"/Fllisting_file.lst"
-		"/Zd"
-		"/Zi"
-		"/coff"
-		"/I$EXTRA_LIB_PATH" # Irvine
-	)
-	$ML_ARGS = @(
-		$ML_OPTIONS
-		$asm_file
-	)
-
-	$LINK_OPTIONS = @(
-		"/NOLOGO"
-		"/DEBUG"
-		"/ASSEMBLYDEBUG"
-		"/MANIFEST"
-		"/NXCOMPAT"
-		"/SUBSYSTEM:CONSOLE"
-		"/INCREMENTAL:NO"
-		"/TLBID:1"
-		"/DYNAMICBASE"
-		"/LIBPATH:$EXTRA_LIB_PATH" # Irvine
-	)
-	$LINK_LIBS = @(
-		"kernel32.lib"
-		"user32.lib"
-		"gdi32.lib"
-		"winspool.lib"
-		"comdlg32.lib"
-		"advapi32.lib"
-		"shell32.lib"
-		"ole32.lib"
-		"oleaut32.lib"
-		"uuid.lib"
-		"odbc32.lib"
-		"odbccp32.lib"
-		"$EXTRA_LIB_NAME" # Irvine
-	)
-	$LINK_ARGS = @(
-		$LINK_OPTIONS
-		$LINK_LIBS
-		"$asm_basename.obj"
-	)
-
 	# calls batch script that sets important environment vars
 	$VCVARS = "$VS_INSTALL_DIR/$VCVARS_SUBPATH"
 	if (!(Test-Path -PathType Leaf -LiteralPath $VCVARS)) {
@@ -242,11 +242,11 @@ function main {
 		exit 1
 	}
 
-	# if $build_dir does not exist, create it, then cd into it
-	if (! (Test-Path $build_dir)) {
-		New-Item -ItemType Directory -Path $build_dir | Out-Null
+	# if $BUILD_DIR does not exist, create it, then cd into it
+	if (! (Test-Path $BUILD_DIR)) {
+		New-Item -ItemType Directory -Path $BUILD_DIR | Out-Null
 	}
-	Set-Location $build_dir
+	Set-Location $BUILD_DIR
 
 	# make sure command is valid
 	switch ($command.ToLower()) {
