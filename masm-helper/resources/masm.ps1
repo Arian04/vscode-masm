@@ -1,5 +1,5 @@
 param (
-    [Parameter(Position=0,Mandatory=$true)][string]$command,
+	[Parameter(Position=0,Mandatory=$true)][string]$command,
 	[Parameter(Position=1,Mandatory=$true)][string]$asm_file,
 	[Parameter(Position=2,Mandatory=$true)][string]$asm_basename
 )
@@ -44,7 +44,7 @@ function Find-Visual-Studio-Install-Path {
 
 	$MS_VS_DIR = "$program_files_path/Microsoft Visual Studio"
 	$VS_EDITIONS = @("Enterprise", "Professional", "Community")
-	
+
 	# if "Microsoft Visual Studio" directory exists
 	if (Test-Path -PathType Container -LiteralPath $MS_VS_DIR) {
 		# get list of subdirectories and iterate over it in "greatest integer first" order because I want to prefer newer Visual Studio installations
@@ -138,18 +138,18 @@ function Initialize-Required-Directories {
 # NOTE: It's pretty slow (relatively). I used the "Profiler" module to find out that it takes up > 95% of the script's
 # 		execution time, but it still takes under a second on my underpowered Windows VM, so it's probably fine.
 function Invoke-Environment {
-    param (
-        # Any cmd shell command, normally a configuration batch file.
-        [Parameter(Mandatory=$true)]
-        [string] $Command
-    )
+	param (
+		# Any cmd shell command, normally a configuration batch file.
+		[Parameter(Mandatory=$true)]
+		[string] $Command
+	)
 
-    $Command = "`"" + $Command + "`""
-    cmd /c "$Command > nul 2>&1 && set" | . { process {
-        if ($_ -match '^([^=]+)=(.*)') {
-            [System.Environment]::SetEnvironmentVariable($matches[1], $matches[2])
-        }
-    }}
+	$Command = "`"" + $Command + "`""
+	cmd /c "$Command > nul 2>&1 && set" | . { process {
+		if ($_ -match '^([^=]+)=(.*)') {
+			[System.Environment]::SetEnvironmentVariable($matches[1], $matches[2])
+		}
+	}}
 
 }
 
@@ -167,11 +167,11 @@ function buildrun {
 }
 
 function build {
-    & $ML @ML_ARGS
-    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+	& $ML @ML_ARGS
+	if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-    & $LINK $LINK_ARGS
-    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+	& $LINK $LINK_ARGS
+	if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 	Write-Output "Successfully built the program!"
 }
