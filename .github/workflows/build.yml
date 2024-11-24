@@ -1,0 +1,39 @@
+name: Build VSIX
+
+on:
+  push:
+
+env:
+  PNPM_VERSION: 9
+  NODE_VERSION: 22
+  EXTENSION_DIR: "masm-helper"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.EXTENSION_DIR }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          cache-dependency-path: "${{ env.EXTENSION_DIR }}"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build VSIX
+        run: pnpm vsce package --no-dependencies
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: masm-helper.vsix
+          path: "${{ env.EXTENSION_DIR }}/*.vsix"
+          if-no-files-found: error
