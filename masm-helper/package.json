@@ -13,7 +13,8 @@
 		"vscode": "^1.90.0"
 	},
 	"categories": [
-		"Programming Languages"
+		"Programming Languages",
+		"Snippets"
 	],
 	"activationEvents": [
 		"onCommand:workbench.action.tasks.runTask"
@@ -23,6 +24,16 @@
 		"taskDefinitions": [
 			{
 				"type": "masm"
+			}
+		],
+		"snippets": [
+			{
+				"language": "masm",
+				"path": "./snippets/masm.json"
+			},
+			{
+				"language": "masm",
+				"path": "./snippets/masm-irvine.json"
 			}
 		]
 	},

@@ -1,0 +1,22 @@
+{
+	"MASM": {
+		"isFileTemplate": true,
+		"scope": "masm",
+		"prefix": "MASM Irvine Library Template",
+		"description": "MASM starter code template for using the Irvine library",
+
+		"body": [
+			"INCLUDE Irvine32.inc",
+			"",
+			".code",
+			"main PROC",
+			"\t${LINE_COMMENT:;} Put your code here",
+			"\tcall DumpRegs",
+			"",
+			"\texit",
+			"main ENDP",
+			"",
+			"END main"
+		]
+	}
+}
