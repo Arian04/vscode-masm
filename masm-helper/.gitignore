@@ -3,7 +3,7 @@ npm-debug.log
 tsconfig.lsif.json
 **/node_modules/
 */out/
-*/dist/
+dist/
 */.vs/
 *.lsif
 *.db
