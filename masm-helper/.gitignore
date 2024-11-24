@@ -1,11 +1,10 @@
 .DS_Store
 npm-debug.log
-Thumbs.db
+tsconfig.lsif.json
 **/node_modules/
 */out/
 */dist/
 */.vs/
-tsconfig.lsif.json
 *.lsif
 *.db
 *.tsbuildinfo
