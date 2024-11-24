@@ -3,7 +3,9 @@
 	"displayName": "MASM Helper",
 	"publisher": "arianb",
 	"repository": {
-		"url": "https://github.com/Arian04/vscode-masm"
+		"type": "git",
+		"url": "https://github.com/Arian04/vscode-masm.git",
+		"directory": "masm-helper"
 	},
 	"description": "",
 	"version": "1.0.0",
@@ -18,12 +20,6 @@
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
-		"commands": [
-			{
-				"command": "masm-helper.helloWorld",
-				"title": "Hello World"
-			}
-		],
 		"taskDefinitions": [
 			{
 				"type": "masm"
