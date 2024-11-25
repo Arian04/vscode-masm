@@ -17,11 +17,10 @@ If you already have those, you're done with this section.
 
 ## Installation Instructions
 
-1. Go to the repository's "Actions" tab, click the latest one (at the top), and download the artifact.
-2. Unzip the file, it should contain a VSIX file.
-3. Install the VSIX file.
-4. *(Optional)* I recommend downloading the [MASM](https://marketplace.visualstudio.com/items?itemName=blindtiger.masm) VS Code extension for syntax highlighting.
-5. *(Optional)* I recommend downloading the [Tasks](https://marketplace.visualstudio.com/items?itemName=actboy168.tasks) VS Code extension so the build tasks are shown in your statusbar (bottom left by default I believe) as clickable buttons.
+1. Go to the repository's "Releases" page and download the attached VSIX file.
+2. Install the VSIX file as a VS Code extension.
+3. *(Optional)* I recommend downloading the [MASM](https://marketplace.visualstudio.com/items?itemName=blindtiger.masm) VS Code extension for syntax highlighting.
+4. *(Optional)* I recommend downloading the [Tasks](https://marketplace.visualstudio.com/items?itemName=actboy168.tasks) VS Code extension so the build tasks are shown in your statusbar (bottom left by default I believe) as clickable buttons.
 
 ## Manual Installation Instructions (Without Extension, Legacy)
 
