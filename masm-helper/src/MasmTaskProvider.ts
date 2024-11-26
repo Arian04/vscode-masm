@@ -2,13 +2,13 @@ import * as vscode from "vscode";
 import * as path from "path";
 
 export class MasmTaskProvider implements vscode.TaskProvider {
-	static readonly TaskType = "masm";
-	private readonly scriptName = "masm.ps1";
+	static readonly TaskType = "masm" as const;
+	private readonly scriptName = "masm.ps1" as const;
 	private readonly scriptPath;
 	private readonly taskSource: string;
 	private readonly definition: vscode.TaskDefinition = {
 		type: MasmTaskProvider.TaskType,
-	};
+	} as const;
 	private readonly defaultShellOptions: vscode.ShellExecutionOptions;
 	private readonly presentationOptions: vscode.TaskPresentationOptions = {
 		echo: false,
@@ -17,7 +17,7 @@ export class MasmTaskProvider implements vscode.TaskProvider {
 		panel: vscode.TaskPanelKind.Shared,
 		showReuseMessage: false,
 		clear: true,
-	};
+	} as const;
 	private readonly resourcesPath: string;
 
 	constructor(source: string, resourcesPath: string) {
@@ -43,40 +43,6 @@ export class MasmTaskProvider implements vscode.TaskProvider {
 				// "EXTRA_LIB_PATH": "C:/Users/EXAMPLE_USER/Documents/Irvine"
 			},
 		};
-	}
-
-	public basenameNoExtension(path: string) {
-		const pathBasename = path.split(/[\\/]/).pop();
-		const pathBasenameNoExtension =
-			pathBasename?.replace(/\.[^/.]+$/, "") ?? "";
-
-		return pathBasenameNoExtension;
-	}
-
-	private makeScriptExecution(
-		args: (string | vscode.ShellQuotedString)[]
-	): vscode.ShellExecution {
-		return new vscode.ShellExecution(
-			args.join(" "),
-			this.defaultShellOptions
-		);
-	}
-
-	private makeTask(
-		name: string,
-		args: (string | vscode.ShellQuotedString)[]
-	): vscode.Task {
-		const task = new vscode.Task(
-			this.definition,
-			vscode.TaskScope.Workspace,
-			name,
-			this.taskSource,
-			this.makeScriptExecution(args)
-		);
-
-		task.presentationOptions = this.presentationOptions;
-		task.group = vscode.TaskGroup.Build;
-		return task;
 	}
 
 	public provideTasks(token?: vscode.CancellationToken) {
@@ -112,5 +78,39 @@ export class MasmTaskProvider implements vscode.TaskProvider {
 
 	public resolveTask(task: vscode.Task, token?: vscode.CancellationToken) {
 		return task;
+	}
+
+	private makeTask(
+		name: string,
+		args: (string | vscode.ShellQuotedString)[]
+	): vscode.Task {
+		const task = new vscode.Task(
+			this.definition,
+			vscode.TaskScope.Workspace,
+			name,
+			this.taskSource,
+			this.makeScriptExecution(args)
+		);
+
+		task.presentationOptions = this.presentationOptions;
+		task.group = vscode.TaskGroup.Build;
+		return task;
+	}
+
+	private makeScriptExecution(
+		args: (string | vscode.ShellQuotedString)[]
+	): vscode.ShellExecution {
+		return new vscode.ShellExecution(
+			args.join(" "),
+			this.defaultShellOptions
+		);
+	}
+
+	public basenameNoExtension(path: string) {
+		const pathBasename = path.split(/[\\/]/).pop();
+		const pathBasenameNoExtension =
+			pathBasename?.replace(/\.[^/.]+$/, "") ?? "";
+
+		return pathBasenameNoExtension;
 	}
 }
