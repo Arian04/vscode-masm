@@ -1,0 +1,45 @@
+# Version catalog is a central place for you to declare and version dependencies
+# https://docs.gradle.org/current/userguide/platforms.html#sub:version-catalog
+# https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
+
+[versions]
+kotlin = "2.0.21"
+kotlinxDatetime = "0.6.1"
+kotlinxSerializationJSON = "1.7.2"
+kotlinxCoroutines = "1.8.1"
+
+# NPM deps
+# current naming convention I've decided on is:
+# - drop '@'
+# - '/' -> '_'
+# - camelCase (Same as other vars)
+typescriptEslint = "^8.15.0"
+
+types_vscode = "^1.90.0" # NOTE: this is shared with the minimum engine version
+types_mocha = "^10.0.9"
+types_node = "20.x"
+
+vscode_testCli = "^0.0.10"
+vscode_testElectron = "^2.4.1"
+vscode_vsce = "^3.2.1"
+esbuild = "^0.24.0"
+eslint = "^9.13.0"
+npmRunAll = "^4.1.5"
+typescript = "^5.6.3"
+
+[libraries]
+kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlinxDatetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
+kotlinxSerialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJSON" }
+kotlinxCoroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+
+# Libraries can be bundled together for easier import
+[bundles]
+kotlinxEcosystem = ["kotlinxDatetime", "kotlinxSerialization", "kotlinxCoroutines"]
+
+[plugins]
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+
+kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+
+buildLogic-js = { id = "buildlogic.convention.kotlin-js" }

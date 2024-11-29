@@ -1,0 +1,25 @@
+{
+	"MASM": {
+		"isFileTemplate": true,
+		"scope": "masm",
+		"prefix": "MASM Template",
+		"description": "MASM starter code template",
+
+		"body": [
+			".386",
+			".model flat,stdcall",
+			".stack 4096",
+			"ExitProcess proto, dwExitCode:dword",
+			"",
+			".code",
+			"main PROC",
+			"\t${LINE_COMMENT:;} Put your code here",
+			"\tadd eax, 0199h",
+			"",
+			"\tINVOKE ExitProcess,0",
+			"main ENDP",
+			"",
+			"END main"
+		]
+	}
+}

@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Debug Extension" type="ChromiumRemoteDebugType" factoryName="Chromium Remote" port="9229">
+    <method v="2">
+      <option name="Gradle.BeforeRunTask" enabled="false" tasks="debugExtension" externalProjectPath="$PROJECT_DIR$/extension" vmOptions="" scriptParameters="" />
+    </method>
+  </configuration>
+</component>
