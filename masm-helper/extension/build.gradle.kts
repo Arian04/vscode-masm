@@ -195,7 +195,7 @@ val taskPackageExtensionPrepareResourcesProd = tasks.register<Copy>("packageExte
     // Copy resources
     from(kotlinJsSrcDir) {
         include("**/*")
-        exclude("*.js", "*.js.map")
+        exclude("*.js", "*.js.map", "*.mjs", "*.mjs.map")
         destinationDir = file(kotlinJsDestDir)
     }
 }

@@ -27,7 +27,7 @@ const esbuildProblemMatcherPlugin = {
 
 async function main() {
     const ctx = await esbuild.context({
-        entryPoints: ["../kotlin/masm-helper-extension.js"],
+        entryPoints: ["../kotlin/masm-helper-extension.mjs"],
         bundle: true,
         format: "cjs",
         minify: production,
