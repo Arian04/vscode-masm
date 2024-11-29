@@ -9,6 +9,9 @@
 	},
 	"description": "",
 	"version": "1.0.0",
+	"extensionDependencies": [
+		"blindtiger.masm"
+	],
 	"engines": {
 		"vscode": "^1.90.0"
 	},
@@ -35,7 +38,43 @@
 				"language": "masm",
 				"path": "./snippets/masm-irvine.json"
 			}
-		]
+		],
+		"configuration": {
+			"title": "MASM",
+			"properties": {
+				"masm-helper.assembler.includePaths": {
+					"order": 0,
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"description": "Specifies paths to search for library include files"
+				},
+				"masm-helper.linker.libraryPaths": {
+					"order": 1,
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"description": "Specifies paths to search for library files"
+				},
+				"masm-helper.linker.libraries": {
+					"order": 2,
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"description": "Specifies names of library files to link with"
+				},
+
+				"masm-helper.experimental.automaticallySetupIrvine": {
+					"order": 3,
+					"type": "boolean",
+					"default": false,
+					"description": "Automatically download and configure the Irvine library"
+				}
+			}
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "pnpm run package",
