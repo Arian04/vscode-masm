@@ -1,6 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="vscode-js">
-    <output-path>$PROJECT_DIR$/vscode/build/libs</output-path>
-    <root id="archive" name="vscode-js.jar" />
-  </artifact>
-</component>

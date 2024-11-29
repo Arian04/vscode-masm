@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="utils">
-    <output-path>$PROJECT_DIR$/utils/build/libs</output-path>
-    <root id="archive" name="utils.jar">
-      <element id="module-output" name="vscode-masm-extension.utils.main" />
-    </root>
-  </artifact>
-</component>

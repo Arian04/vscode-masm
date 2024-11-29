@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="utils-js">
-    <output-path>$PROJECT_DIR$/utils/build/libs</output-path>
-    <root id="archive" name="utils-js.jar">
-      <element id="module-output" name="masm-helper.utils.jsMain" />
-    </root>
-  </artifact>
-</component>
