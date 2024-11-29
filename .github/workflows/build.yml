@@ -7,6 +7,7 @@ env:
   PNPM_VERSION: 9
   NODE_VERSION: 22
   EXTENSION_DIR: "masm-helper"
+  GRADLE_TARGET: "packageExtensionProduction"
 
 jobs:
   build:
@@ -16,6 +17,15 @@ jobs:
         working-directory: ${{ env.EXTENSION_DIR }}
     steps:
       - uses: actions/checkout@v4
+
+      # Setup Gradle
+      - uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+
+      # Setup pnpm
       - uses: pnpm/action-setup@v4
         with:
           version: ${{ env.PNPM_VERSION }}
@@ -25,15 +35,13 @@ jobs:
           cache: pnpm
           cache-dependency-path: "${{ env.EXTENSION_DIR }}"
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build VSIX
-        run: pnpm vsce package --no-dependencies
+      - name: Build
+        shell: sh
+        run: ./gradlew ${{ env.GRADLE_TARGET }} --no-daemon
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: masm-helper.vsix
-          path: "${{ env.EXTENSION_DIR }}/*.vsix"
+          path: "${{ env.EXTENSION_DIR }}/build/js/packages/masm-helper-extension/dist-vsix/*.vsix"
           if-no-files-found: error
