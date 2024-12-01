@@ -5,7 +5,7 @@ export class MasmTaskProvider implements vscode.TaskProvider {
 	static readonly TaskType = "masm" as const;
 	private readonly scriptName = "masm.ps1" as const;
 	private readonly scriptPath;
-	private readonly taskSource: string;
+	private readonly extensionName: string;
 	private readonly definition: vscode.TaskDefinition = {
 		type: MasmTaskProvider.TaskType,
 	} as const;
@@ -21,7 +21,7 @@ export class MasmTaskProvider implements vscode.TaskProvider {
 	private readonly resourcesPath: string;
 
 	constructor(source: string, resourcesPath: string) {
-		this.taskSource = source;
+		this.extensionName = source;
 		this.resourcesPath = resourcesPath;
 		this.scriptPath = path.join(this.resourcesPath, this.scriptName);
 		this.defaultShellOptions = {
@@ -52,6 +52,11 @@ export class MasmTaskProvider implements vscode.TaskProvider {
 			console.log("currentActiveTextEditor is undefined");
 			return;
 		}
+
+		const config = vscode.workspace.getConfiguration(this.extensionName);
+		const assemblerIncludePaths = config.get<String[]>('assembler.includePaths');
+		const linkerLibraryPaths = config.get<String[]>('linker.libraryPaths');
+		const linkerLibraries = config.get<String[]>('linker.libraries');
 
 		const filePath = currentActiveTextEditor.document.fileName;
 		const fileBasenameNoExtension = this.basenameNoExtension(filePath);
@@ -88,7 +93,7 @@ export class MasmTaskProvider implements vscode.TaskProvider {
 			this.definition,
 			vscode.TaskScope.Workspace,
 			name,
-			this.taskSource,
+			this.extensionName,
 			this.makeScriptExecution(args)
 		);
 
